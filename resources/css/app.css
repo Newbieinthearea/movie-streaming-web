@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0');
+@import "tailwindcss";
+
+@keyframes gradient-animation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Class to apply the animation */
+.animated-gradient {
+    /* Define the multi-color gradient */
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    /* Set the background size to be much larger than the element */
+    background-size: 400% 400%;
+    /* Apply the animation */
+    animation: gradient-animation 15s ease infinite;
+
+    /* These two lines are crucial for making the text itself show the gradient */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
