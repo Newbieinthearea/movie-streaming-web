@@ -2,22 +2,20 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\BrowseController; // Make sure to import it
+use App\Http\Controllers\BrowseController;
+use App\Http\Controllers\Api\EpisodeController;
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// New API route for fetching filtered content
 Route::get('/browse', [BrowseController::class, 'getFilteredContent']);
+
+// The API route now accepts the TMDB ID and season number directly
+Route::get('/tv/{tmdb_id}/season/{season_number}', [EpisodeController::class, 'index'])->name('api.episodes.index');

@@ -19,39 +19,32 @@
         : route('movies.show', $id);
 
     // Define the appropriate watch page route based on type
-    // This assumes you have a watch route defined for both movies and tv shows/episodes
-    // For a TV show card, this could link to the first episode of the first season, for example.
-    // For now, we'll link the movie's watch page and the TV show's detail page.
     $watchUrl = $type === 'movie' ? route('movies.watch', $id) : route('tv-shows.show', $id);
 @endphp
 
 <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden group relative">
-    {{-- The main link is now just on the poster and title, not the whole card --}}
     <a href="{{ $detailUrl }}">
         <div class="relative aspect-[2/3]">
             <img src="{{ $poster }}" alt="{{ $title }} Poster" class="w-full h-full object-cover">
         </div>
     </a>
 
-    {{-- Absolute positioned overlay for hover effects --}}
-    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-3">
+    {{-- This overlay will be shown on hover for mouse users, and always for touch users --}}
+    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3 touch-overlay">
         
-        {{-- Top part of overlay: Title and Year --}}
-        <div>
-            <a href="{{ $detailUrl }}">
-                <h3 class="font-bold text-white group-hover:text-purple-400 transition-colors" title="{{ $title }}">{{ $title }}</h3>
-            </a>
-            <p class="text-xs text-gray-400">{{ $year }}</p>
-        </div>
-
-        {{-- Bottom part of overlay: Buttons --}}
         <div class="space-y-2">
-            <a href="{{ $watchUrl }}" class="flex items-center justify-center w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-3 rounded-md text-sm transition-colors">
-                <span class="material-symbols-outlined mr-2 text-base">play_arrow</span>
+             <div>
+                <a href="{{ $detailUrl }}">
+                    <h3 class="font-bold text-white group-hover:text-purple-400 transition-colors" title="{{ $title }}">{{ \Illuminate\Support\Str::limit($title, 25) }}</h3>
+                </a>
+                <p class="text-xs text-gray-400">{{ $year }}</p>
+            </div>
+            <a href="{{ $watchUrl }}" class="flex items-center justify-center w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-3 rounded-md text-xs transition-colors">
+                <span class="material-symbols-outlined mr-1 text-sm">play_arrow</span>
                 Watch Now
             </a>
-             <a href="{{ $detailUrl }}" class="flex items-center justify-center w-full bg-gray-600/80 hover:bg-gray-500/80 text-white font-semibold py-2 px-3 rounded-md text-sm transition-colors">
-                <span class="material-symbols-outlined mr-2 text-base">info</span>
+             <a href="{{ $detailUrl }}" class="flex items-center justify-center w-full bg-gray-600/80 hover:bg-gray-500/80 text-white font-semibold py-2 px-3 rounded-md text-xs transition-colors">
+                <span class="material-symbols-outlined mr-1 text-sm">info</span>
                 Details
             </a>
         </div>

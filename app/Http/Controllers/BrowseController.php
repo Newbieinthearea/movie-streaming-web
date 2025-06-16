@@ -24,8 +24,9 @@ class BrowseController extends Controller
         $genreInput = $request->input('genre');
         $sortInput = $request->input('sort', $query ? null : 'latest');
 
-        // Fetch all genres for the dropdown
-        $genres = $this->tmdbService->getGenres();
+        // Fetch genres for the dropdowns
+        $movieGenres = $this->tmdbService->getMovieGenres();
+        $tvGenres = $this->tmdbService->getTvGenres();
         $availableYears = range(Carbon::now()->year, 1900);
 
         $results = [];
@@ -38,53 +39,21 @@ class BrowseController extends Controller
 
         if ($query) {
             // --- SEARCH MODE ---
-            // Use multi-search to find both movies and TV shows
             $apiResponse = $this->tmdbService->searchMulti($query, $page);
             
-            // Debug: Log the raw API response
-            \Log::info('Search API Response', [
-                'query' => $query,
-                'total_results' => $apiResponse['total_results'] ?? 0,
-                'results_count' => count($apiResponse['results'] ?? []),
-                'type_filter' => $type
-            ]);
-            
-            // If type is specified and not 'multi', filter results by media_type
             if ($type && $type !== 'multi') {
                 $mediaType = $type === 'tv_show' ? 'tv' : $type;
-                $originalCount = count($apiResponse['results'] ?? []);
                 $apiResponse['results'] = collect($apiResponse['results'] ?? [])
-                    ->filter(function($item) use ($mediaType) {
-                        return ($item['media_type'] ?? '') === $mediaType;
-                    })
-                    ->values()
-                    ->all();
-                
-                // Debug: Log filtering results
-                \Log::info('Type filtering', [
-                    'original_count' => $originalCount,
-                    'filtered_count' => count($apiResponse['results']),
-                    'media_type_filter' => $mediaType
-                ]);
+                    ->filter(fn($item) => ($item['media_type'] ?? '') === $mediaType)
+                    ->values()->all();
             }
             
-            // Apply year filter if specified
             if ($yearInput) {
-                $originalCount = count($apiResponse['results'] ?? []);
                 $apiResponse['results'] = collect($apiResponse['results'] ?? [])
                     ->filter(function($item) use ($yearInput) {
                         $releaseDate = $item['release_date'] ?? $item['first_air_date'] ?? '';
                         return str_starts_with($releaseDate, $yearInput);
-                    })
-                    ->values()
-                    ->all();
-                
-                // Debug: Log year filtering results
-                \Log::info('Year filtering', [
-                    'original_count' => $originalCount,
-                    'filtered_count' => count($apiResponse['results']),
-                    'year_filter' => $yearInput
-                ]);
+                    })->values()->all();
             }
         } else {
             // --- DISCOVER MODE ---
@@ -108,7 +77,8 @@ class BrowseController extends Controller
             'query' => $query,
             'results' => $results,
             'paginationData' => $paginationData,
-            'genres' => $genres,
+            'movieGenres' => $movieGenres, // Pass movie genres
+            'tvGenres' => $tvGenres,       // Pass TV show genres
             'years' => $availableYears,
             'currentType' => $type,
             'currentGenre' => $genreInput,
