@@ -38,15 +38,7 @@ Route::get('/movies', [MovieController::class, 'index'])->name('movies.index');
 
 // Group for specific CMS resource management sections, like Genres, Movies, etc.
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    // Resource routes for Genre Management
-    // This will create routes like:
-    // GET /admin/genres -> admin.genres.index
-    // GET /admin/genres/create -> admin.genres.create
-    // POST /admin/genres -> admin.genres.store
-    // GET /admin/genres/{genre} -> admin.genres.show
-    // GET /admin/genres/{genre}/edit -> admin.genres.edit
-    // PUT/PATCH /admin/genres/{genre} -> admin.genres.update
-    // DELETE /admin/genres/{genre} -> admin.genres.destroy
+
     Route::get('/moderation', [ModerationController::class, 'index'])->name('moderation.index');
     Route::post('/moderation', [ModerationController::class, 'store'])->name('moderation.store');
     Route::delete('/moderation/{blockedContent}', [ModerationController::class, 'destroy'])->name('moderation.destroy');
